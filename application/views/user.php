@@ -120,8 +120,11 @@
 															<div class="portlet-body">
 																<div class="tabbable-line">
 																	<ul class="nav nav-tabs ">
-																		<li class="active">
-																			<a href="#tab_15_1" data-toggle="tab">Users </a>
+																		<li class="active" id ="it_user">
+																			<a href="#tab_15_1" data-toggle="tab">IT Users </a>
+																		</li>
+                                                                        <li id ="nonit_user">
+																			<a href="#tab_15_1" data-toggle="tab">Non IT Employees </a>
 																		</li>
 																	</ul>
 																	<div class="tab-content">
@@ -664,6 +667,26 @@
                 // Animate loader off screen
                 $(".se-pre-con").fadeOut("slow");;
             });
+
+
+//Active Or Nonactive Script 
+
+            var it_user=true;
+
+            function setActiveTab() {
+                var it_user_tab = document.getElementsById('it_user');
+                var nonit_user_tab = document.getElementById('nonit_user');
+
+                it_user_tab.classList.remove('active');
+                nonit_user_tab.classList.remove('active');
+
+                if (it_user) {
+                    nonit_user_tab.classList.add('active');
+                } else {
+                    it_user_tab.classList.add('active');
+             }
+                
+            }
         </script>
         
     </body>
