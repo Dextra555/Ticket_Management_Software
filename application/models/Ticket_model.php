@@ -67,7 +67,7 @@ public function ticket_pending_update($data1,$update_id)
                  move_uploaded_file($_FILES['attachment']['tmp_name'][$i], "uploads/ticket". $update_id ."/". $_FILES['attachment']['name'][$i]);
 				 
 				 array_push($a,$_FILES['attachment']['name'][$i]);
-				 				file_put_contents("E://sujitha.txt","xcvfd".print_r($_FILES['attachment']['name'][$i],true),FILE_APPEND);
+				 				file_put_contents("D://sujitha.txt","xcvfd".print_r($_FILES['attachment']['name'][$i],true),FILE_APPEND);
 
             	$sql = "UPDATE ticket SET file_path ='".implode(',', $a)."' WHERE ticket_id='$update_id'";
             	$this->db->query($sql);
@@ -111,18 +111,19 @@ public function create_ticket($data)
 
 	public function view_ticket_details($id)
 	{
-		$this->db->select('t.*,b.branch_id,b.branch_name,s.*');
+		$this->db->select('t.*,b.location_id,b.location,s.*');
 		$this->db->from('ticket t');
-		$this->db->join('branch b', 'b.branch_id = t.branch');
+		$this->db->join('location b', 'b.location_id = t.location');
 		$this->db->join('status s', 's.status_id = t.issue_status');
 		$this->db->where('ticket_id',$id);
 		$data1 = $this->db->get()->result_array();
 		
-		$this->db->select('c.*,u.name');
+		$this->db->select('c.*,u.user_name');
 		$this->db->from('comments c');
 		$this->db->join('users u', 'u.user_id = c.comment_by');
 		$this->db->where('ticket_id',$id);
 		$data2 = $this->db->get()->result_array();
+		
 		$data['ticket_data'] = $data1;
 		$data['comments_data'] = $data2;
 		return $data;

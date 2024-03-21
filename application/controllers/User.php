@@ -1,8 +1,11 @@
 <?php
 if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class User extends CI_Controller {
+require_once 'vendor/autoload.php';
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
+class User extends CI_Controller {
+   
 	 function __construct()
 	{
 		parent::__construct();
@@ -27,6 +30,25 @@ class User extends CI_Controller {
 	{
 		$this->load->view($data_val);
 	} */
+
+
+public function storeStatus()
+{
+	$status = $this->input->post('status');
+     $id=$this->input->post('userId');
+	$data = array(
+		'status' => $status
+	);
+	$this->db->where('user_id', $id); 
+	$result = $this->db->update('users', $data);
+
+	if ($result) {
+		echo json_encode(array('success' => true));
+	} else {
+		echo json_encode(array('success' => false));
+	}	
+}
+
 	
 	public function user_homepage()
 	{
@@ -39,32 +61,38 @@ class User extends CI_Controller {
 			redirect('ticket/ticket_homepage','refresh');
 		}
 	    $data_val['title'] ="Users";
-		$data_val['name'] = $this->session->userdata('USER_FNAME');
+		$data_val['user_name'] = $this->session->userdata('USER_FNAME');
 		$data_val['user_details'] = $this->User1_model->get_user_details();
 		$this->load->view('user',$data_val);  
 	}
 	public function save_user_details()
 	{
+					
+
+		$user_id = $this->input->post('user_id'); 
 		$user_name = $this->input->post('user_name'); 
-		$user_pass = $this->input->post('user_pass'); 
-		$user_fname = $this->input->post('user_fname'); 
-		$user_email = $this->input->post('user_email'); 
-		$user_mobile = $this->input->post('user_mobile'); 
-		$user_company = $this->input->post('user_company'); 
-		$user_address = $this->input->post('user_address'); 
-		$user_notes = $this->input->post('user_notes'); 
+		$user_dept_id = $this->input->post('dept_id'); 
+		$user_loc_id = $this->input->post('loc_id'); 
+		$user_email = $this->input->post('email'); 
+		$user_pass = $this->input->post('pass'); 
+		$user_repass = $this->input->post('repass');
+		$user_mobile = $this->input->post('mobile');
+		$user_notes = $this->input->post('notes'); 
 		$user_role = $this->input->post('user_role'); 
+		$status="Decline";
 		$data = array(
-					'name'=>$user_fname,
-					'mobile'=>$user_mobile,
+					'user_id'=>$user_id,
+					'user_name'=>$user_name,
+					'dept_id'=>$user_dept_id,
+					'location_id'=>$user_loc_id,
 					'email'=>$user_email,
-					'address'=>$user_address,
+					'password'=>$user_pass,
+					'mobile'=>$user_mobile,
 					'role'=>$user_role,
-					'company'=>$user_company,
-					'username'=>$user_name,
-					'password'=>sha1($user_pass),
 					'notes'=>$user_notes,
-					'created_at' => date('Y-m-d',now()),	
+					'status'=>$status,
+					'created_at' => date('Y-m-d H:i:s'),
+					'updated_at' => date('Y-m-d H:i:s'),	
 					'created_by' => 1,							
 					); 
 	  $res = $this->User1_model->save_user_details($data);	
@@ -129,13 +157,13 @@ public function check_name()
 		$user_notes = $this->input->post('user_notes'); 
 		$user_role = $this->input->post('user_role'); 
 		$data = array(
-					'name'=>$user_fname,
+					'user_name'=>$user_fname,
 					'mobile'=>$user_mobile,
 					'email'=>$user_email,
-					'address'=>$user_address,
+					// 'address'=>$user_address,
 					'role'=>$user_role,
-					'company'=>$user_company,
-					'username'=>$user_name,
+					// 'company'=>$user_company,
+					// 'username'=>$user_name,
 					//'password'=>$user_pass,
 					'notes'=>$user_notes,
 					'created_at' => date('Y-m-d',now()),	
@@ -198,5 +226,48 @@ public function check_name()
 		$res = $this->User1_model->get_edit_permissions($id);
 		echo json_encode($res);
 	}
+
+	public function excel_upload() {
+		$tmpFilePath = $_FILES['file']['tmp_name'];
+		$spreadsheet = IOFactory::load($tmpFilePath);
+		$worksheet = $spreadsheet->getActiveSheet();
+		$highestRow = $worksheet->getHighestRow();
+		$highestColumn = $worksheet->getHighestColumn();
+
+		$data = [];
+		for ($row = 1; $row <= $highestRow; ++$row) {
+			$rowData = [];
+			for ($col = 'A'; $col <= $highestColumn; ++$col) {
+				$rowData[] = $worksheet->getCell($col . $row)->getValue();
+			}
+			$data[] = $rowData;
+		}
+
+		for ($i=1; $i < count($data); $i++) { 
+			if (empty($data[$i][0]) || empty($data[$i][1]) || empty($data[$i][2]) || empty($data[$i][3]) || empty($data[$i][4]) || empty($data[$i][5]) || empty($data[$i][6]) || empty($data[$i][7]) || empty($data[$i][8]) || empty($data[$i][9])) {
+				continue;
+			}
+			
+			$data = array(
+				'user_id'=> $data[$i][0],
+				'user_name'=> $data[$i][1],
+				'dept_id'=> $data[$i][2],
+				'location_id'=> $data[$i][3],
+				'email'=> $data[$i][4],
+				'password'=> $data[$i][5],
+				'mobile'=> $data[$i][6],
+				'role'=> $data[$i][7],
+				'notes'=> $data[$i][8],
+				'status'=> $data[$i][9],
+				'created_at' => date('Y-m-d H:i:s'),
+				'updated_at' => date('Y-m-d H:i:s'),	
+				'created_by' => 1,							
+				);
+			$res = $this->User1_model->save_user_details($data);
+		}
+
+		redirect('user/user_homepage');
+	}
 }
+ 
 ?>

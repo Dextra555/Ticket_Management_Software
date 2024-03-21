@@ -13,8 +13,9 @@ class Login_model extends CI_Model {
 	{
 		$this->db->select('*');
 		$this->db->from('users');
-		$this->db->where('username',$username);
-		$this->db->where('password',sha1($password));
+		$this->db->where('email',$username);
+		$this->db->where('password',$password);
+		// $this->db->where('password',sha1($password));
 		return $this->db->get()->result_array();
 	}
 	public function check_customer_login($username, $password)

@@ -1,5 +1,6 @@
 var save_branch = '../branch/save_branch_details',
     save_location= '../admin/save_location_details',
+	save_device= '../admin/save_device_details',
 	create_new_role = '../branch/create_new_role',
 	clicked_branch_delete_action = '../branch/clicked_branch_delete_action',
 	clicked_branch_password_updations = '../branch/clicked_branch_password_updations',
@@ -123,12 +124,6 @@ $('#save_branch').click(function()
 		}
 
 	});
-
-
-
-//save Location
-
-
 
 
 

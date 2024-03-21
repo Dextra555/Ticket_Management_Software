@@ -32,9 +32,9 @@ $("input[name=company]").keyup(function(){
        }
 
 });
-$("input[name=mobile]").keyup(function(){
-        this.value = this.value.replace(/\D/g,'');
-});
+// $("input[name=mobile]").keyup(function(){
+//         this.value = this.value.replace(/\D/g,'');
+// });
 	
 $("input[name=name]").change(function(){
 		var name = $('input[name=name]').val();
@@ -76,55 +76,66 @@ $("input[name=name]").change(function(){
 $('#save_user').click(function()
 	{
 
-	var name = $("input[name=name]").val();
+	var user_id = $("input[name=user_id]").val();
 	var user_name = $("input[name=uname]").val();
-	var user_pass = $("input[name=pass]").val();
-	var user_repass = $("input[name=repass]").val();
-	var user_email =  $("input[name=uname]").val();
-	var mobile = $('input[name=mobile]').val();
-	var company = $('input[name=company]').val();
-	var address = $('textarea[name=address]').val();
-	var notes = $('textarea[name=notes]').val();
+	var dept_id = $("select[name=dept_id]").val();
+	var loc_id = $("select[name=loc_id]").val();
+	var email =  $("input[name=email]").val();
+	var pass = $('input[name=pass]').val();
+	var repass = $('input[name=repass]').val();
 	var user_role = $('select[name=role]').val();
+	var notes = $('textarea[name=notes]').val();
+	var mobile = $('input[name=mobile]').val();
 	var regex = /^[0-9a-zA-Z\_\s]+$/;
 	var pattern = new RegExp("^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[a-z0-9-]+(\.[a-z0-9-]+)*(\.[a-z]{2,4})$");
-	var result = pattern .test(user_email);
-	if(name == '')
+	// var result = pattern .test(user_email);
+
+
+
+	
+	if(user_id == '')
 	{
-		alert('Enter User Full Name!')
-		 $('input[name=name]').focus();
-	}
-	else if(regex.test(name)== false)
-	{
-		alert('Full Name is not valid!')
-		 $('input[name=name]').focus();
+		alert('Enter User ID!')
+		 $('input[name=user_id]').focus();
 	}
 	else if(user_name == '')
 	{
 		alert('Enter User Name / Email!')
 		 $('input[name=uname]').focus();
 	}
-	else if ((user_name != '') && (!result))
+	else if(dept_id == '')
 	{
-		alert('Email Id is not valid!')
-		$('input[name=uname]').focus();
+		alert('Department ID is empty!')
+		$('select[name=dept_id]').focus();
 	}
-	else if(user_pass == '')
+	else if(loc_id == '')
+	{
+		alert('Location is empty!')
+		$('select[name="loc_id"]').focus();
+	}
+	else if(email == '')
+	{
+		alert('Confirm Email is empty!')
+		$('input[name=email]').focus();
+	}
+	else if(pass == '')
 	{
 		alert('Password is empty!')
 		$('input[name=pass]').focus();
 	}
-	else if(user_pass.length<5)
+	else if(repass == '')
 	{
-		alert('Password minimum length is 5!')
-		$('input[name=pass]').focus();
-	}
-	else if(user_repass == '')
-	{
-		alert('Confirm password is empty!')
+		alert('Confirm Password is empty!')
 		$('input[name=repass]').focus();
 	}
-	else if(user_pass != user_repass)
+	else if(user_role == '')
+	{
+		alert('Role is empty!')
+		$('select[name="role"]').focus();
+	}
+
+
+	else if(pass != repass)
 	{
 		alert('Password Missmatched!')
 		$('input[name=pass]').val('').focus();
@@ -136,52 +147,51 @@ $('#save_user').click(function()
 			alert( "Enter Mobile Number!" );
 			$('input[name=mobile]').focus();
 		}
-	else if(!/^[\+]?([\d]{9}|0)?([\d]{10}|0)?$/.test(mobile))
-	{
-		alert( "Mobile Number should be 9 or 10 digits Only!" );
-		$('input[name=mobile]').focus();
-	}
+	// else if(!/^[\+]?([\d]{9}|0)?([\d]{10}|0)?$/.test(mobile))
+	// {
+	// 	alert( "Mobile Number should be 9 or 10 digits Only!" );
+	// 	$('input[name=mobile]').focus();
+	// }
 
-	else if(company == '')
-	{
-		alert( "Enter user company!" );
-		$('input[name=company]').focus();
-	}
-	else if(user_role == '')
-	{
-		alert('Role is empty!')
-		$('select[name="role"]').focus();
-	}
-	else if(address == '')
-	{
-		alert('Enter user address!')
-		$('textarea[name="address"]').focus();
-	}
+	// else if(company == '')
+	// {
+	// 	alert( "Enter user company!" );
+	// 	$('input[name=company]').focus();
+	// }
+	
+	// else if(address == '')
+	// {
+	// 	alert('Enter user address!')
+	// 	$('textarea[name="address"]').focus();
+	// }
 	else
 	{
 		$.LoadingOverlay("show");
 		var data = 
 				{
-					  user_fname: name,
-					  user_name: user_name,
-					  user_pass: user_pass,
-					  user_mobile: mobile,
-					  user_email: user_email,
-					  user_company: company,
-					  user_address: address,
-					  user_notes: notes,
-					  user_role: user_role,
+					user_id: user_id,
+					user_name: user_name,
+					dept_id: dept_id,
+					loc_id: loc_id,
+					email: email,
+					pass: pass,
+					repass: repass,
+					user_role: user_role,
+					notes: notes,
+					mobile:mobile,
 				};  
 		   var fd = new FormData();
+			   fd.append('user_id', data.user_id);
 			   fd.append('user_name', data.user_name);
-			   fd.append('user_pass', data.user_pass);
-			   fd.append('user_fname', data.user_fname);
-			   fd.append('user_mobile', data.user_mobile);
-			   fd.append('user_email', data.user_email);
+			   fd.append('dept_id', data.dept_id);
+			   fd.append('loc_id', data.loc_id);
+			   fd.append('email', data.email);
+			   fd.append('pass', data.pass); 
+			   fd.append('repass', data.repass); 
 			   fd.append('user_role', data.user_role); 
-			   fd.append('user_company', data.user_company); 
-			   fd.append('user_address', data.user_address); 
-			   fd.append('user_notes', data.user_notes); 
+			   fd.append('notes', data.notes);
+			   fd.append('mobile', data.mobile); 
+
 			$.ajax({
 					  url: save_user,
 					  type: 'POST',
@@ -217,7 +227,7 @@ $('#save_user').click(function()
 							 $('#static').modal('hide');
 							 window.location.reload(true);
 						  },
-			  error: function(err, ex) 
+			  		error: function(err, ex) 
 					{
 						alert('Unable to Save details! Please try again later.');
 						console.log(err.responseText, ex.message);
@@ -290,7 +300,7 @@ $('#save_user').click(function()
 // Change the password here
 		$('#change_user_password').click(function()
 		{
-			var user_name = $("input[name=user_name]").val();		
+			var user_name = $("input[name=user_name]").val();	   	
 			var full_name = $("input[name=full_name]").val();	
 			var id_value_stored = $("input[name=id_value_stored]").val();	
 			var change_password_user = $("input[name=change_password_user]").val();
@@ -378,8 +388,8 @@ $('body').delegate('.view_user_details ', 'click', function(e)
 						 for (var i=0; i<obj.length; i++)
 							{
 									$("input[name=vid_value_stored]").val(obj[i].user_id);
-									$("input[name=vuname]").val(obj[i].username);
-									$("input[name=vname]").val(obj[i].name);
+									$("input[name=vuname]").val(obj[i].email);
+									$("input[name=vname]").val(obj[i].user_name);
 									$("input[name=vmobile]").val(obj[i].mobile);
 									$("input[name=vcompany]").val(obj[i].company);
 									$("input[name=vuemail]").val(obj[i].email);
@@ -416,16 +426,16 @@ $('body').delegate('.edit_user_details ', 'click', function(e)
 						 for (var i=0; i<obj.length; i++)
 							{
 								$("input[name=edit_id_value]").val(obj[i].user_id);
-								$("input[name=euname]").val(obj[i].username);
-								$("input[name=ename]").val(obj[i].name);
+								$("input[name=euname]").val(obj[i].email);
+								$("input[name=ename]").val(obj[i].user_name);
 								$("input[name=emobile]").val(obj[i].mobile);
-								$("input[name=ecompany]").val(obj[i].company);
-								$("input[name=euemail]").val(obj[i].email);
+								// $("input[name=ecompany]").val(obj[i].company);
+								// $("input[name=euemail]").val(obj[i].email);
 								$("select option").each(function(){
 								if ($(this).val() == obj[i].role)
 									$(this).attr("selected","selected");
 								});
-								$("textarea[name=eaddress]").val(obj[i].address);
+								// $("textarea[name=eaddress]").val(obj[i].address);
 								$("textarea[name=enotes]").val(obj[i].notes);
 								
 							}
@@ -526,21 +536,21 @@ $("input[name=ename]").change(function(){
 	} 
 
 
-	else if(company == '')
-	{
-		alert( "Enter user company!" );
-		$('input[name=ecompany]').focus();
-	}
+	// else if(company == '')
+	// {
+	// 	alert( "Enter user company!" );
+	// 	$('input[name=ecompany]').focus();
+	// }
 	else if(user_role == '')
 	{
 		alert('Role is empty!')
 		$('select[name="erole"]').focus();
 	}
-	else if(address == '')
-	{
-		alert('Enter user address!')
-		$('textarea[name="eaddress"]').focus();
-	}
+	// else if(address == '')
+	// {
+	// 	alert('Enter user address!')
+	// 	$('textarea[name="eaddress"]').focus();
+	// }
 	else
 	{
 		$.LoadingOverlay("show");
@@ -597,4 +607,3 @@ $("input[name=ename]").change(function(){
 			   });
 		}
 	});
-

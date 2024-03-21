@@ -222,7 +222,7 @@ $cookie_data = unserialize($_COOKIE['cookie'], ["allowed_classes" => false]);
 				{
 					  username: name,
 					  password: password,
-					  remember_me:remember_me,
+                        remember_me:remember_me,
 				};  
 		   var fd = new FormData();
 			   fd.append('username', data.username);

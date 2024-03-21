@@ -1,9 +1,9 @@
-var save_location= '../admin/save_location_details',
-	create_new_role = '../admin/create_new_role',
-	clicked_location_delete_action = '../admin/clicked_location_delete_action',
-	clicked_location_password_updations = '../admin/clicked_location_password_updations',
-	view_location_details = '../admin/clicked_view_edit_location_details',
-	update_branch_details = '../admin/clicked_location_details_updations';
+var save_location= '../admin/save_location_details';
+	create_new_role = '../admin/create_new_role';
+	clicked_location_delete_action = '../admin/clicked_location_delete_action';
+	clicked_location_password_updations = '../admin/clicked_location_password_updations';
+	view_location_details = '../admin/clicked_view_edit_location_details';
+	update_location_details = '../admin/clicked_location_details_updations';
 	clicked_role_delete_action = '../admin/clicked_role_delete_action';
 	clicked_edit_role_details = '../admin/clicked_edit_role_details';
 	update_edit_role_details = '../admin/update_edit_role_details';
@@ -11,6 +11,8 @@ var save_location= '../admin/save_location_details',
 	clicked_role_permission_edit = '../admin/clicked_role_permission_edit';
 	get_edit_permissions = '../admin/get_edit_permissions';
 	check_location = '../admin/check_location';
+
+	
 $("input[name=location]").keyup(function(){
     	var regex = /^[0-9a-zA-Z\-\s]+$/;
        // this.value = this.value.replace(/\D/g,'');
@@ -21,6 +23,7 @@ $("input[name=location]").keyup(function(){
        }
 
 });
+
 $("input[name=location]").change(function(){
     var location = $('input[name=location]').val();
      var fd = new FormData();
@@ -57,10 +60,9 @@ $("input[name=location]").change(function(){
                 }
             });
 });
+
 $('#save_location').click(function()
 {
-    alert('Please');
-
 var location = $("input[name=location]").val();
 var location_id = $('textarea[name=location_id]').val();
 
@@ -117,6 +119,7 @@ else
 
 });
 
+
 $('body').delegate('.location_delete ', 'click', function(e) 
 {
 // alert($(this).attr("data-id"))
@@ -162,6 +165,7 @@ var data =
 }
 
 });
+
 $('body').delegate('.view_location_details ', 'click', function(e) 
 	{	
 		
@@ -198,6 +202,7 @@ $('body').delegate('.view_location_details ', 'click', function(e)
 					}
 			   });
 	});
+	
     $("input[name=elocation]").change(function(){
 		var location = $('input[name=elocation]').val();
 		 var fd = new FormData();
@@ -234,6 +239,7 @@ $('body').delegate('.view_location_details ', 'click', function(e)
 					}
 				});
 	});	
+	
     $('body').delegate('.edit_location_details ', 'click', function(e) 
 	{
 		event.preventDefault();
@@ -255,7 +261,7 @@ $('body').delegate('.view_location_details ', 'click', function(e)
 							{
 								$("input[name=edit_id]").val(obj[i].id);
 								$("input[name=elocation]").val(obj[i].location);
-								$("textarea[name= elocation_id]").val(obj[i].location_id);
+								$("textarea[name=elocation_id]").val(obj[i].location_id);
 								$("select option").each(function(){
 								if ($(this).val() == obj[i].branch_master)
 									$(this).attr("selected","selected");
@@ -270,7 +276,7 @@ $('body').delegate('.view_location_details ', 'click', function(e)
 					}
 			   });
 	});
-
+		
     $('#update_location_details').click(function(event)
 	{
 	var edit_id = $("input[name=edit_id]").val();
@@ -280,7 +286,7 @@ $('body').delegate('.view_location_details ', 'click', function(e)
 
 	if(location == '')
 	{
-		alert('Enter lacation Name!')
+		alert('Enter location Name!')
 		 $('input[name=location]').focus();
 	}
 
@@ -300,15 +306,15 @@ $('body').delegate('.view_location_details ', 'click', function(e)
 		var data = 
 				{
 					  edit_id:edit_id,
-					  location: lcation,
-					  location_id: location,
+					  location: location,
+					  location_id: location_id,
 					  //branch_master: branch_master,
 				};  
 		   var fd = new FormData();
 			   fd.append('edit_id', data.edit_id);
 			   fd.append('location', data.location);
 			   fd.append('location_id', data.location_id);
-			  // fd.append('branch_master', data.branch_master);
+			   //fd.append('branch_master', data.branch_master);
 
 			$.ajax({
 					  url: update_location_details,

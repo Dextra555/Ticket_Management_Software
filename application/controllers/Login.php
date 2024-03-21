@@ -84,7 +84,7 @@ class Login extends CI_Controller {
 		}
 		else
 		{
-
+ 
 			$username = $this->input->post('username');
 			$password = $this->input->post('password');
 			$rememberme = $this->input->post('remember_me');
@@ -129,9 +129,9 @@ class Login extends CI_Controller {
 				$this->session->set_userdata('LOGGED_IN', 1);
 				$this->session->set_userdata('logged_in', TRUE);
 				$this->session->set_userdata('USER_ID', $result[0]['user_id']);
-				$this->session->set_userdata('USER_NAME', $result[0]['username']);
+				// $this->session->set_userdata('USER_NAME', $result[0]['username']);
 				$this->session->set_userdata('USER_ROLE', $result[0]['role']);
-				$this->session->set_userdata('USER_FNAME', $result[0]['name']);
+				$this->session->set_userdata('USER_FNAME', $result[0]['user_name']);
 				$this->session->set_userdata('PASSWORD', $password);
 				$this->session->set_userdata('REMEMBER', $rememberme);
 				

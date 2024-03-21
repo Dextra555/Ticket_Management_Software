@@ -55,9 +55,9 @@ class User1_model extends CI_Model {
 		return $this->db->get()->result_array();
 	}
 
-	public function clicked_view_edit_users($get_id)
+	public function clicked_view_edit_users($get_id)  
 	{
-		/* $this->db->select('*');
+		/* $this->db->select('*');  
 		 $this->db->from('users');
 		 $this->db->where('user_id', $get_id);*/
 		 return $this->db->query("select r.role_name,u.* from users u,user_roles r where u.role = r.role_id and u.user_id=". $get_id)->result_array();
@@ -158,6 +158,26 @@ class User1_model extends CI_Model {
 		$this->db->where('id',$id);
 		return $this->db->get()->result_array();
 	}
-}
 
+public function import_excel_data($filePath) {
+    // Load the PhpSpreadsheet library
+    require_once APPPATH.'third_party/PhpSpreadsheet/vendor/autoload.php';
+
+    $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($filePath);
+    $worksheet = $spreadsheet->getActiveSheet();
+
+    $data = [];
+    foreach ($worksheet->getRowIterator() as $row) {
+        $rowData = [];
+        foreach ($row->getCellIterator() as $cell) {
+            $rowData[] = $cell->getValue();
+        }
+        // Insert $rowData into the database or process as needed
+        // Example: $this->db->insert('table_name', $rowData);
+        $data[] = $rowData;
+    }
+
+    return $data;
+}
+}
 ?>

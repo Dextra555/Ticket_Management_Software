@@ -15,6 +15,21 @@ class Location_model extends CI_Model {
 		$this->db->from('location');
 		return $this->db->get()->result_array();
 	}
+	
+	
+	
+	public function save_device_details()
+	{
+		$this->db->insert('device_status', $data);
+		$this->db->select('*');
+		$this->db->from('device_status');
+		$this->db->order_by('id','DESC');
+		$this->db->limit(1);			
+		return $this->db->get()->result_array();
+	}
+
+
+
 	public function save_location_details($data)
 	{
 		$this->db->insert('location', $data);
@@ -25,15 +40,15 @@ class Location_model extends CI_Model {
 		return $this->db->get()->result_array();
 	}
 	
-	public function clicked_branch_delete_action($get_id)
+	public function clicked_location_delete_action($get_id)
 	{
-		  $this->db->where('branch_id', $get_id);
- 		  $this->db->delete('branch'); 
+		  $this->db->where('id', $get_id);
+ 		  $this->db->delete('location'); 
  		  return 'Deleted success';
 	}
 	public function clicked_location_password_updations($id_value_stored,$change_password_location)
 	{
-		$sql = "UPDATE branch SET password='".sha1($change_password_location)."' WHERE id='$id_value_stored'";
+		$sql = "UPDATE location SET password='".sha1($change_password_location)."' WHERE id='$id_value_stored'";
 		$this->db->query($sql);
 		return 'updated success';		
 	}
@@ -51,7 +66,7 @@ class Location_model extends CI_Model {
 	public function get_location_role_details()
 	{
 		$this->db->select('*');
-		$this->db->from('branch_new_role');
+		$this->db->from('location_new_role');
 		return $this->db->get()->result_array();
 	}
 
@@ -99,7 +114,7 @@ class Location_model extends CI_Model {
 		return $this->db->get()->result_array();
 	}
 	
-	public function clicked_role_give_permission($branch_id,$get_check_in_menus)
+	public function clicked_role_give_permission($id,$get_check_in_menus)
 	{
 		 $sql = "UPDATE location SET menu_list='$get_check_in_menus' WHERE id='$id'";
 		 $this->db->query($sql);
@@ -139,7 +154,7 @@ class Location_model extends CI_Model {
     public function get_menu_list_from_database($logined_id)
 	{
 		$this->db->select('menu_list');
-		$this->db->from('branch');
+		$this->db->from('location');
 		$this->db->where('id',$logined_id);
 		return $this->db->get()->result_array();
 	}

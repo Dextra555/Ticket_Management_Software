@@ -69,15 +69,15 @@ $("input[name=company_name]").keyup(function(){
        }
 
 });
-$("input[name=contact_number]").keyup(function(){
-        this.value = this.value.replace(/\D/g,'');
-});
+// $("input[name=contact_number]").keyup(function(){
+//         this.value = this.value.replace(/\D/g,'');
+// });
 $("input[name=name]").change(function(){
 		var name = $('input[name=name]').val();
 		 var fd = new FormData();
 		fd.append('name', name);
 		$.ajax({
-				  url: check_name,
+				  url: check_name,  
 				  type: 'POST',
 				  data: fd,
 				  contentType: false,
@@ -122,21 +122,19 @@ $("input[name=name]").change(function(){
 // For save the user details to the data base:
 $("#form_img").submit(function(e){
 	     e.preventDefault();
-	var customer_id = $("input[name=customer_id]").val();
-	var name = $("input[name=name]").val();
-	var company_name = $("input[name=company_name]").val();
-	var contact_person = $("input[name=contact_person]").val();
+
+    var name = $("input[name=name]").val();
 	var contact_number = $("input[name=contact_number]").val();
-	var address = $("textarea[name=address]").val();
 	var email = $("input[name=email]").val();
-	var subject = $("input[name=subject]").val();
-	var device_location = $("input[name=device_location]").val();
-	var issue_desc = $("textarea[name=issue_desc]").val();
-	var branch = $("select[name=branch]").val();
-	var comments = $("textarea[name=comments]").val();
-	var system = $("input[name=system]").val();
+	var location = $("select[name=location]").val();
+	var technician = $("select[name=technician]").val();
+	var system = $("select[name=system]").val();
+	var otherOption= $("input[name=otherOption]").val();
+	var dept = $("select[name=dept]").val();
+	var subject = $("select[name=subject]").val();
+	var issue_desc = $("select[name=issue_desc]").val();
 	var attachment = $("input[name=attachment]").val();
- 	var clicked_date1 = "";
+
 	var pattern = new RegExp("^[_A-Za-z0-9\-]+(\.[_A-Za-z0-9]+)*@[A-Za-z0-9\-]+(\.[A-Za-z0-9\-]+)*(\.[A-Za-z]{2,9})$");
 	var result = pattern .test(email);
 
@@ -156,43 +154,29 @@ $("#form_img").submit(function(e){
 		            alert( "Contact Should be 9 or 10 Digits Only!" );
 		            $('input[name=contact_number]').focus().val('');
 		        }
-				else if(company_name == '')
-				{
-					alert("Enter Company Nmae!");
-					$('input[name=company_name]').focus();	
-				}
-			
-				else if(address == '')
-				{
-					alert("Enter Address!")
-					$('textarea[name=address]').focus();
-				}
-				
 				else if((email != '') && (!result))
 				{
 					alert( "Enter Correct E-mail Format!" );
 					$('input[name=email1]').focus();
 				}
-					else if(contact_person == '')
+				else if(location == '')
 				{
-					alert("Enter Contact Person!");
-					$('input[name=contact_person]').focus();	
-				}
-				
-				else if(device_location == '')
-				{
-					alert("Enter Device Location!")
-					$('input[name=device_location]').focus();
+					alert("Enter Location!")
+					$('input[name=location]').focus();
 				}
 				else if(system == '')
 				{
 					alert("Enter Device/System!")
 					$('input[name=system]').focus();
 				}
-				else if(branch == '')
+				else if(technician == '')
 				{
-					alert("Select Branch!")
-					$('select[name=branch]').focus();
+					alert("Select Technician!")
+					$('input[name=technician]').focus();
+				}else if(dept == '')
+				{
+					alert("Select Department!")
+					$('input[name=dept]').focus();
 				}
 				else if(subject == '')
 				{
@@ -255,15 +239,18 @@ $("#edit_ticket_form").submit(function(e){
 	var status = $("select[name=status]").val();
 	var comment = $("textarea[name=description]").val();
     var user_role = $('input[name=user_role]').val();
+  
 
      if(user_role != 4){
 				
-if(service_engineer == '')
+                if(service_engineer == '')
 				{
-				   
 					alert("Select Service Engineer!")
 					$('select[name=service_engineer]').focus();
-
+				} if(comment == '')
+				{
+					alert("Enter Your Comment!")
+					$('textarea[name=description]').focus();
 				}
 				
 				else
@@ -272,6 +259,7 @@ if(service_engineer == '')
 
 
 					    var formData = new FormData($("#edit_ticket_form")[0]);
+						
 					$.ajax({
 							  url: ticket_pending_update,
 							  type: 'POST',
@@ -297,6 +285,7 @@ if(service_engineer == '')
 					{
 						alert('Unable to Save details! Please try again later.');
 						console.log(err.responseText, ex.message);
+						console.log("formData : ".formData);
 					}
 			   });
 		}
@@ -405,16 +394,15 @@ if(service_engineer == '')
 						console.log(err.responseText, ex.message);
 					}
 			    });
-	
+	         
 		});
 
 
 };
 $('body').delegate('.edit_ticket_details', 'click', function(e) 
 	{
-		
 var get_cliked_id_value = $(this).data("id");
-//alert(get_cliked_id_value);
+// alert(get_cliked_id_value);
 		$.LoadingOverlay("show");
 
 		e.preventDefault();
@@ -427,17 +415,16 @@ var get_cliked_id_value = $(this).data("id");
 			  			   
 			$.ajax({
 					  url: view_ticket_details,
-					  type: 'POST',
+					  type: 'POST',  
 					  data: fd,
 					  contentType: false,
 					  processData: false,
 					  success: function(res) 
 						  {
-						   
 			   				var data = JSON.parse(res);
 			   				var obj = data.ticket_data;
 			   				var comme_obj =data.comments_data;
-			   				 console.log(comme_obj)
+			   				
 
 						  for (var i=0; i<obj.length; i++)
 							{
@@ -470,7 +457,7 @@ var get_cliked_id_value = $(this).data("id");
 								    for (var j=0; j < nameArr.length; j++)
 							{      
 								    var file_path = '<a target="_blank" href="../uploads/ticket'+id+'/'+nameArr[j]+'";>'+nameArr[j]+'</a></br>';
-								    jQuery("label[for='attachment']").append(file_path);
+								    jQuery("label[for='attachment']").append(file_path);         
                                     
 							}
 														    

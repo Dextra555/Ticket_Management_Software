@@ -28,6 +28,25 @@ class Ticket extends CI_Controller {
 			redirect('login','refresh');
 		}
 	}
+	
+	
+	public function get_technicians() {
+		$location_id = $this->input->post('location_id');
+	
+		$escaped_location_id = $this->db->escape($location_id);
+	
+	
+		$technicians = $this->db
+        ->select('*')
+        ->from('users')
+        ->where('role', '3')
+         ->like('location_id', $location_id)
+        ->get()
+        ->result_array();
+
+		echo json_encode($technicians);
+	}
+
 
 
 		public function ticket_homepage()
@@ -47,13 +66,13 @@ class Ticket extends CI_Controller {
 		    $today =date('Y-m-d');
 		   
 		    if($today >=  $two_days && $data->assigned_staff_id == ""){
-		    $branches=$this->db->query("select branch_name from branch where branch_id=".$data->branch)->row();
+		   // $branches=$this->db->query("select branch_name from branch where branch_id=".$data->branch)->row();
             $mail['name']=$data->name;
             $mail['comapany_name']=$data->company_name;
             $mail['contact_person']=$data->contact_person;
             $mail['mobile']=$data->contact_number;
             $mail['email']=$data->email;
-            $mail['branch']=$branches->branch_name;
+           // $mail['branch']=$branches->branch_name;
             $mail['address']=$data->address;
             $mail['system']=$data->system;
             $mail['device_location']=$data->device_location;
@@ -112,26 +131,35 @@ class Ticket extends CI_Controller {
             // print_r($ticket_before);
 
       	  $res = $this->ticket_model->get_search_result($ticket_from,$ticket_before,$ticket_status);	
-    	  echo json_encode($res);
-    	   
+    	  echo json_encode($res);	   
     }
 	public function create_ticket()
 	{
 		$customer_id = $this->input->post('customer_id'); 
 		$customer_name = $this->input->post('name'); 
 		$contact_number = $this->input->post('contact_number'); 
-		$address = $this->input->post('address'); 
 		$email = $this->input->post('email'); 
+		$location = $this->input->post('location'); 
+		$technician =$this->input->post('technician');
+		$systems = $this->input->post('system');
+		
+			if($systems == "other"){
+				$system = $this->input->post('otherOption'); 
+			}else{					
+				$system = $this->input->post('system');	
+			}
+		
+		$dept =$this->input->post('dept');
+		$subject = $this->input->post('subject'); 
+		$issue_desc = $this->input->post('issue_desc'); 
+
+
 		$ticket_date = $this->input->post('ticket_date'); 
 		$ticket_time = $this->input->post('ticket_time'); 
-		$subject = $this->input->post('subject'); 
 	//	$comments = $this->input->post('comments'); 
-		$device_location = $this->input->post('device_location'); 
-		$issue_desc = $this->input->post('issue_desc'); 
-		$system = $this->input->post('system'); 
-		$company_name = $this->input->post('company_name'); 
-		$contact_person = $this->input->post('contact_person'); 
-		$branch = $this->input->post('branch'); 
+		// $company_name = $this->input->post('company_name'); 
+		// $contact_person = $this->input->post('contact_person'); 
+		// $branch = $this->input->post('branch'); 
 		$status = 1;
 		$customer_id1 = '';
 
@@ -139,17 +167,18 @@ class Ticket extends CI_Controller {
 			'user_id'=>$customer_id,
 			'name'=>$customer_name,
 			'contact_number'=>$contact_number,
-			'address'=>$address,
+			// 'address'=>$address,
 			'email'=>$email,
 			'subject'=>$subject,
 			'issue_desc'=>$issue_desc,
-			'device_location'=>$device_location,
-			'branch'=>$branch,
+			'location'=>$location,
+			'technician'=>$technician,
 			'system'=>$system,
-			'company_name'=>$company_name,
-			'contact_person'=>$contact_person,
+			'department'=>$dept,
+			// 'contact_person'=>$contact_person,
 			//'comments'=>$comments,
 			'issue_status'=>1,
+			'assigned_staff_id'=>$technician,
 			'request_date'=>date('Y-m-d',now()),
 			'created_by'=>$this->session->userdata('USER_ID'),
 			'created_at'=>date('Y-m-d h:i',now()),
@@ -159,53 +188,63 @@ class Ticket extends CI_Controller {
 
 		$get_current_logined_user_fname = $this->session->userdata('USER_FNAME');
 		$res = $this->ticket_model->create_ticket($data1);
-	    foreach($res as $data){
-	        
-	        $branches=$this->db->query("select branch_name from branch where branch_id=".$data->branch)->row();
+	    foreach ($res as $data) {
 
-            $mail['name']=$data->name;
-            $mail['comapany_name']=$data->company_name;
-            $mail['contact_person']=$data->contact_person;
-            $mail['mobile']=$data->contact_number;
-            $mail['email']=$data->email;
-            $mail['branch']=$branches->branch_name;
-            $mail['address']=$data->address;
-            $mail['system']=$data->system;
-            $mail['device_location']=$data->device_location;
-            $mail['subject']=$data->subject;
-            $mail['issue_desc']=$data->issue_desc;
-            $mail['request_date']=$data->request_date;
-            $sub = "New Ticket Request #".$data->ticket_id." Created"; 
+            //$branches=$this->db->query("select branch_name from branch where branch_id=".$data->branch)->row();
+
+            $mail['name'] = $data->name;
+          // $mail['comapany_name'] = $data->company_name;
+           //$mail['contact_person'] = $data->contact_person;
+            $mail['mobile'] = $data->contact_number;
+            $mail['email'] = $data->email;
+            //$mail['branch'] = 'Chennai';
+          // $mail['address'] = $data->address;
+            $mail['system'] = $data->system;
+            $mail['location'] = $data->location;
+            $mail['subject'] = $data->subject;
+            $mail['department'] = $data->department;
+            $mail['assigned_staff_id'] = $data->assigned_staff_id;
+			// $mail['department'] = $data->dept;
+			// $mail['assigned_staff_id'] = $data->$technician;
+            $mail['issue_desc'] = $data->issue_desc;
+            $mail['request_date'] = $data->request_date;
+            $sub = "New Ticket Request #" . $data->ticket_id . " Created";
+
+            $config = array(
+                'protocol' => 'smtp',
+                'smtp_host' => 'tls://smtp.gmail.com',
+                'smtp_user' => 'dextrawebdeveloper@gmail.com',
+                'smtp_pass' => 'awvk esil nybm zgae',
+                'smtp_timeout' => 30,
+                'smtp_port' => 465,
+                'charset' => 'utf-8',
+                'mailtype' => 'html',
+                'newline' => "\r\n",
+            );
+
             $this->load->library('email');
-    		$this->email->initialize(array(
-    		'protocol' => 'smtp',
-    		'smtp_host' => 'smtp.gmail.com',
-    		'smtp_user' => 'dextrawebdeveloper@gmail.com',
-    		'smtp_pass' => 'DEXTRA10*babu',
-    		//'smtp_port' => 587,
-    		'smtp_port' => 587,
-    		 'mailtype'  => 'html',
-    	    'charset'   => 'utf-8',
-    	    'protocol'   => 'mail',
-    		'crlf' => "\r\n",
-    		'newline' => "\r\n"
-    		));
-    		
-    		if($data->file_path != ""){
-    		    $ima = $data->file_path;
-        		$images = explode(',', $ima);
-        		foreach($images as $img){
-        	    	$this->email->attach("uploads/ticket". $data->ticket_id ."/".$img);
-        		}
-    		}
-    	
-            $this->email->from('ffd@zenerfire.com','Zener Fire & Security LLC');
+            $this->email->initialize($config);
+
+            if ($data->file_path != "") {
+                $ima = $data->file_path;
+                $images = explode(',', $ima);
+                foreach ($images as $img) {
+                    $this->email->attach("uploads/ticket" . $data->ticket_id . "/" . $img);
+                }
+            }
+
+            $technician_id = $this->db->escape($data->technician);
+            $query = "SELECT * FROM users WHERE user_id = $technician_id";
+            $technician_data = $this->db->query($query)->row();
+
+            $this->email->from('dextrawebdeveloper@gmail.com', 'Dextra');
             $this->email->to($data->email);
-           // $this->email->cc('dextrawebdeveloper@gmail.com');
-            $this->email->subject($sub); 
-            $this->email->message($this->load->view('create_ticket_mailer',$mail,TRUE));
-            // $ok = $this->email->send();
-	    }
+            $this->email->cc($technician_data->email);
+
+            $this->email->subject($sub);
+            $this->email->message($this->load->view('create_ticket_mailer', $mail, true));
+            $ok = $this->email->send();
+        }
 	  echo json_encode($res);
 	}
 	public function ticket_pending_update()
@@ -215,6 +254,8 @@ class Ticket extends CI_Controller {
 		$comment = $this->input->post('description'); 
 		$status = $this->input->post('status'); 
 		 $comments = array();
+		
+		
         if($comment !=""){
 		$data2 = array(
 			'ticket_id'=>$update_id,
@@ -226,6 +267,7 @@ class Ticket extends CI_Controller {
 
         }
 	$data1 = array(
+		
 			'assigned_staff_id'=>$service_engineer,
 			'issue_status'=>$status,
 			'updated_by'=>$this->session->userdata('USER_FNAME'),
